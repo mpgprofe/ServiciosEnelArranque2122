@@ -4,9 +4,12 @@ package com.example.serviciosenelarranque2122;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.util.Log;
+import android.widget.Toast;
 
 
 import androidx.annotation.NonNull;
@@ -24,6 +27,7 @@ public class MiServicioIntenso extends JobIntentService {
     private static final int ID_TRABAJO = 666;
     String ETIQUETA = "SERVICIOINTENSO";
     int contador = 1;
+    CuandoPasanCosas cuandoPasanCosas = new CuandoPasanCosas();
 
 
     public MiServicioIntenso() {
@@ -33,6 +37,12 @@ public class MiServicioIntenso extends JobIntentService {
     @Override
     protected void onHandleWork(@NonNull Intent intent) {
         Log.d(ETIQUETA, "Comenzamos a trabajar");
+
+        IntentFilter intentFilter = new IntentFilter(Intent.ACTION_POWER_DISCONNECTED);
+        intentFilter.addAction(Intent.ACTION_POWER_CONNECTED);
+        getBaseContext().registerReceiver(cuandoPasanCosas, intentFilter);
+
+
         while(true){
             mandarNotificaciones(getApplicationContext());
             Log.d(ETIQUETA, "Manda notificación");
@@ -65,6 +75,20 @@ public class MiServicioIntenso extends JobIntentService {
 
     static void encolarTrabajo(Context context, Intent trabajo){
         enqueueWork(context, MiServicioIntenso.class, ID_TRABAJO,  trabajo);
+    }
+
+    class CuandoPasanCosas extends BroadcastReceiver{
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.getAction().equals(Intent.ACTION_POWER_CONNECTED)){
+                Log.d(ETIQUETA, "Se ha conectado el cable");
+                Toast.makeText(context, "Has conecado el cable", Toast.LENGTH_SHORT).show();
+            }else if (intent.getAction().equals(Intent.ACTION_POWER_DISCONNECTED)){
+                Log.d(ETIQUETA, "Se ha desconectado el cable");
+                Toast.makeText(context, "Has desconecado el cable", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 
 }
