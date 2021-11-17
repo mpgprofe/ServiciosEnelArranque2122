@@ -52,6 +52,7 @@ public class MiServicioIntenso extends JobIntentService {
         Random random = new Random();
         random.setSeed(System.currentTimeMillis());
         Intent intent = new Intent(applicationContext, MainActivity.class);
+        Log.d(ETIQUETA, "Aleatorio: "+random.nextInt(1000000));
         intent.putExtra(MainActivity.MENSAJE, "El número es: "+random.nextInt(1000000));
 
         PendingIntent pendingIntent  = PendingIntent.getActivity(applicationContext, ID, intent,0);

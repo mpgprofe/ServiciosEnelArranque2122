@@ -25,6 +25,7 @@ public class MainActivity extends AppCompatActivity {
         if (extras!=null){
             String mensaje = extras.getString(MENSAJE);
             Toast.makeText(this, mensaje, Toast.LENGTH_LONG).show();
+            extras.clear();
         }
 
         crearCanalNotificiones();
